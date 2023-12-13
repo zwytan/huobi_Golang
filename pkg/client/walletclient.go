@@ -67,8 +67,7 @@ func (p *WalletClient) GetWithdrawQuota(currency string) (*wallet.WithdrawQuota,
 	return nil, errors.New(getResp)
 }
 
-
-//  Parent user to query withdraw address available for API key
+// Parent user to query withdraw address available for API key
 func (p *WalletClient) GetWithdrawAddress(request *model.GetRequest) (*wallet.GetWithdrawAddressResponse, error) {
 	url := p.privateUrlBuilder.Build("GET", "/v2/account/withdraw/address", request)
 	getResp, getErr := internal.HttpGet(url)
@@ -164,4 +163,19 @@ func (p *WalletClient) QueryDepositWithdraw(depositOrWithdraw string, optionalRe
 		return result.Data, nil
 	}
 	return nil, errors.New(getResp)
+}
+func (p *WalletClient) QueryWithdrawByClientOrderId(request *model.GetRequest) (*wallet.QueryWithdrawByClientOrderIdResponse, error) {
+	url := p.privateUrlBuilder.Build("GET", "/v1/query/withdraw/client-order-id", request)
+	getResp, getErr := internal.HttpGet(url)
+	if getErr != nil {
+		return nil, getErr
+	}
+
+	result := wallet.QueryWithdrawByClientOrderIdResponse{}
+	jsonErr := json.Unmarshal([]byte(getResp), &result)
+	if jsonErr != nil {
+		return nil, jsonErr
+	}
+
+	return &result, nil
 }
